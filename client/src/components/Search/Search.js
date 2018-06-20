@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import DeleteBtn from "./../DeleteBtn";
+import SaveBtn from "./../SaveBtn";
 // import Jumbotron from "./../Jumbotron";
 import Minitron from "./../Minitron";
 import API from "../../utils/API";
@@ -11,16 +12,17 @@ import { Input, FormBtn } from "./../Form";
 class Search extends Component {
 	state = {
 		news: [],
+		saved: [],
 		topic: "",
 		startYear: "",
 		endYear: ""
 	};
 
 	componentDidMount() {
-		this.loadNews();
+		this.loadSavedNews();
 	}
 
-	loadNews = () => {
+	loadSavedNews = () => {
 		let startDate = this.state.startYear + "0101";
 		let endDate = this.state.endYear + "1231";
 		API.getNews(this.state.topic, startDate, endDate)
@@ -64,7 +66,7 @@ class Search extends Component {
 		return (
 			<Container fluid>
 				<Row>
-					<Col size="md-6 sm-12">
+					<Col size="xl-4 lg-6 md-6 sm-12">
 						<Minitron>
 							<h1>Search</h1>
 						</Minitron>
@@ -95,20 +97,45 @@ class Search extends Component {
 							</FormBtn>
 						</form>
 					</Col>
-					<Col size="md-6 sm-12">
+					<Col size="xl-4 lg-6 md-6 sm-12">
 						<Minitron>
-							<h1>Results</h1>
+							<h1>Top 10 Results</h1>
 						</Minitron>
 						{this.state.news.length ? (
 							<List>
 								{this.state.news.map(news1 => (
 									<ListItem key={news1.web_url}>
+										<a href={news1.web_url} target="_blank">
 											<strong>
-												{news1.headline.main} 
-												<br/> 
-												Published: {news1.pub_date}
+												{news1.headline.main}
 											</strong>
-										<DeleteBtn onClick={() => this.deleteBook(news1._id)} />
+											<br />
+											Published: {news1.pub_date}
+										</a>
+										<SaveBtn onClick={() => this.saveNews(news1._id)} />
+									</ListItem>
+								))}
+							</List>
+						) : (
+								<h3>No Results to Display</h3>
+							)}
+					</Col>
+					<Col size="xl-4 lg-12 md-12 sm-12">
+						<Minitron>
+							<h1>Saved Articles</h1>
+						</Minitron>
+						{this.state.saved.length ? (
+							<List>
+								{this.state.saved.map(save => (
+									<ListItem key={save.__id}>
+										<a href={save.web_url} target="_blank">
+											<strong>
+												{save.topic}
+											</strong>
+											<br />
+											Published: {save.pub_date}
+										</a>
+										<DeleteBtn onClick={() => this.deleteNews(save._id)} />
 									</ListItem>
 								))}
 							</List>
